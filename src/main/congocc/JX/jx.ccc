@@ -1,0 +1,153 @@
+// This documented is created using this spec: https://facebook.github.io/jsx/
+
+
+INCLUDE "../java/Java.ccc";
+
+INJECT JxExpression : extends PrimaryExpression;
+
+
+JXExpression :
+  JXElement
+  |
+  JXFragment
+;
+
+
+// 1.2 JX Elements
+JXElement :
+  JXSelfClosingElement
+  |
+  JXOpeningElement [JXChildren] JXClosingElement
+  {
+    // Assert that the opening and closing element names are the same
+    assert self.JXOpeningElement.JXElementName.text == self.JXClosingElement.JXElementName.text :
+      "Syntax Error: Mismatched JSX element names";
+  }
+;
+
+JXSelfClosingElement :
+  <LT> JXElementName [JXAttributes] <SLASH> <GT>
+;
+
+JXOpeningElement :
+  <LT> JXElementName [JXAttributes] <GT>
+;
+
+JXClosingElement :
+ <LT> <SLASH> JXElementName <GT>
+;
+
+JXFragment :
+  <LT> <GT>
+  JXChildren
+  <LT> <SLASH> <GT>
+;
+
+JXElementName :
+  JXIdentifier
+  |
+  JXNamespacedName
+  |
+  JXMemberExpression
+;
+
+JXIdentifier :
+  <JAVA_IDENTIFIER_START> (<JAVA_IDENTIFIER_PART>)*
+;
+
+JXNamespacedName :
+  JXIdentifier <COLON> JXIdentifier
+;
+
+JXMemberExpression :
+  JXIdentifier <DOT> JXIdentifier
+;
+
+// 1.3 JX Attributes
+JXAttributes :
+  (JXSpreadAttribute | JXAttribute)*
+;
+
+JXSpreadAttribute :
+  <LBRACE> <DOT><DOT><DOT> AssignmentExpression
+;
+
+JXAttribute :
+  JXArrtibuteName [JXAttributeInitializer]
+;
+
+JXArrtibuteName :
+  JXIdentifier
+  |
+  JXNamespacedName
+;
+
+JXAttributeInitializer :
+  <EQ> JXAttributeValue
+;
+
+JXAttributeValue :
+  "\"" [JXDoubleStringCharacters] "\""
+  |
+  "\'" [JXSingleStringCharacters] "\'"
+  |
+  <LBRACE> AssignmentExpression <RBRACE>
+  |
+  JXElement
+  |
+  JXFragment
+;
+
+JXDoubleStringCharacters :
+  (JXDoubleStringCharacter)*
+;
+
+JXDoubleStringCharacter :
+  JXStringCharacter
+  // todo add assert char != "
+;
+
+JXSingleStringCharacters :
+  (JXSingleStringCharacter)*
+;
+
+JXSingleStringCharacter :
+  JXStringCharacter
+  // todo add assert char != '
+;
+
+
+// 1.4 Children
+JXChildren :
+  (JXChild)*
+;
+
+JXChild :
+  JXText
+  |
+  JXElement
+  |
+  JXFragment
+  |
+  <LBRACE> [JXChildExpression] <RBRACE>
+;
+
+JXText :
+  (JXTextCharacter)*
+;
+
+JXTextCharacter :
+  JXStringCharacter
+  // todo add assert char != { or < or > or }
+;
+
+JXChildExpression :
+  AssignmentExpression
+  |
+  <DOT><DOT><DOT> AssignmentExpression
+;
+
+JXStringCharacter :
+  <JAVA_IDENTIFIER_PART>
+  // todo
+;
