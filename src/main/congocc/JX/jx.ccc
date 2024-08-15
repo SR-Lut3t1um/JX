@@ -1,153 +1,122 @@
 // This documented is created using this spec: https://facebook.github.io/jsx/
+// PARSER_PACKAGE="me.tobiasliese.JX";
 
+// since the char fields of the Java.ccc files are private I'm using the Identifier token instead of redifining them according to the jsx docs
 
-INCLUDE "../java/Java.ccc";
+INJECT JxExpression : implements PrimaryExpression
 
-INJECT JxExpression : extends PrimaryExpression;
+JxExpression :(
+	JxElement | JxFragment
+);
 
-
-JXExpression :
-  JXElement
-  |
-  JXFragment
-;
-
-
+INJECT JxElement : implements PrimaryExpression
 // 1.2 JX Elements
-JXElement :
-  JXSelfClosingElement
+JxElement:(
+	JxOpeningElement [SCAN JxChildren => JxChildren] JxClosingElement
   |
-  JXOpeningElement [JXChildren] JXClosingElement
-  {
-    // Assert that the opening and closing element names are the same
-    assert self.JXOpeningElement.JXElementName.text == self.JXClosingElement.JXElementName.text :
-      "Syntax Error: Mismatched JSX element names";
-  }
+  JxSelfClosingElement
+  // todo Assert that the opening and closing element names are the same
+);
+
+JxSelfClosingElement :
+  <LT> JxElementName [SCAN JxAttributes => JxAttributes] <SLASH> <GT>
 ;
 
-JXSelfClosingElement :
-  <LT> JXElementName [JXAttributes] <SLASH> <GT>
+JxOpeningElement :
+  <LT> JxElementName [SCAN JxAttributes => JxAttributes] <GT>
 ;
 
-JXOpeningElement :
-  <LT> JXElementName [JXAttributes] <GT>
+JxClosingElement :
+ <LT> <SLASH> JxElementName <GT>
 ;
 
-JXClosingElement :
- <LT> <SLASH> JXElementName <GT>
-;
-
-JXFragment :
+JxFragment : (
   <LT> <GT>
-  JXChildren
+  JxChildren
   <LT> <SLASH> <GT>
+)
 ;
 
-JXElementName :
-  JXIdentifier
+JxElementName : (
+  <IDENTIFIER>
   |
-  JXNamespacedName
+  JxNamespacedName
   |
-  JXMemberExpression
+  JxMemberExpression
+);
+
+JxNamespacedName :
+  <IDENTIFIER> <COLON> <IDENTIFIER>
 ;
 
-JXIdentifier :
-  <JAVA_IDENTIFIER_START> (<JAVA_IDENTIFIER_PART>)*
+JxMemberExpression :
+  <IDENTIFIER> <DOT> <IDENTIFIER>
 ;
 
-JXNamespacedName :
-  JXIdentifier <COLON> JXIdentifier
+// 1.3 Jx Attributes
+JxAttributes :
+  (SCAN JxSpreadAttribute => JxSpreadAttribute | SCAN JxAttribute => JxAttribute)*
 ;
 
-JXMemberExpression :
-  JXIdentifier <DOT> JXIdentifier
+JxSpreadAttribute :
+  <LBRACE> <DOT><DOT><DOT> AssignmentExpression <RBRACE>
 ;
 
-// 1.3 JX Attributes
-JXAttributes :
-  (JXSpreadAttribute | JXAttribute)*
+JxAttribute :
+  JxAttributeName [JxAttributeInitializer]
 ;
 
-JXSpreadAttribute :
-  <LBRACE> <DOT><DOT><DOT> AssignmentExpression
-;
-
-JXAttribute :
-  JXArrtibuteName [JXAttributeInitializer]
-;
-
-JXArrtibuteName :
-  JXIdentifier
+JxAttributeName :(
+  <IDENTIFIER>
   |
-  JXNamespacedName
+  JxNamespacedName
+);
+
+JxAttributeInitializer :
+  <EQ> JxAttributeValue =>||
 ;
 
-JXAttributeInitializer :
-  <EQ> JXAttributeValue
-;
-
-JXAttributeValue :
-  "\"" [JXDoubleStringCharacters] "\""
+JxAttributeValue :(
+  "\"" [JxDoubleStringCharacters] "\""
   |
-  "\'" [JXSingleStringCharacters] "\'"
+  "\'" [JxSingleStringCharacters] "\'"
   |
   <LBRACE> AssignmentExpression <RBRACE>
   |
-  JXElement
+  JxElement
   |
-  JXFragment
+  JxFragment
+);
+
+JxDoubleStringCharacters :
+  <IDENTIFIER>
 ;
 
-JXDoubleStringCharacters :
-  (JXDoubleStringCharacter)*
+JxSingleStringCharacters :
+  <IDENTIFIER>
 ;
-
-JXDoubleStringCharacter :
-  JXStringCharacter
-  // todo add assert char != "
-;
-
-JXSingleStringCharacters :
-  (JXSingleStringCharacter)*
-;
-
-JXSingleStringCharacter :
-  JXStringCharacter
-  // todo add assert char != '
-;
-
 
 // 1.4 Children
-JXChildren :
-  (JXChild)*
+JxChildren :
+	 (SCAN JxChild => JxChild)*
 ;
 
-JXChild :
-  JXText
+JxChild :(
+  <LBRACE> [SCAN JxChildExpression => JxChildExpression] <RBRACE>
   |
-  JXElement
+  SCAN JxElement => JxElement
   |
-  JXFragment
+  SCAN JxFragment => JxFragment
   |
-  <LBRACE> [JXChildExpression] <RBRACE>
+  JxText
+);
+
+JxText :
+  <IDENTIFIER>
 ;
 
-JXText :
-  (JXTextCharacter)*
-;
-
-JXTextCharacter :
-  JXStringCharacter
-  // todo add assert char != { or < or > or }
-;
-
-JXChildExpression :
+JxChildExpression :(
   AssignmentExpression
   |
   <DOT><DOT><DOT> AssignmentExpression
-;
-
-JXStringCharacter :
-  <JAVA_IDENTIFIER_PART>
-  // todo
-;
+);
