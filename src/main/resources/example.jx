@@ -1,0 +1,10 @@
+package me.tobiasliese.Example;
+
+
+public class Example {
+	String render(String asd) {
+		return <h1>
+			{asd}
+		</h1>;
+	}
+}
