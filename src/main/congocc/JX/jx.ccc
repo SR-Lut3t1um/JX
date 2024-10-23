@@ -1,15 +1,15 @@
 // This documented is created using this spec: https://facebook.github.io/jsx/
 // PARSER_PACKAGE="me.tobiasliese.JX";
-
+PRESERVE_LINE_ENDINGS=true;
 // since the char fields of the Java.ccc files are private I'm using the Identifier token instead of redifining them according to the jsx docs
 
 INJECT JxExpression : implements PrimaryExpression
 
 JxExpression :(
-	JxElement | JxFragment
+	SCAN JxElement => JxElement | JxFragment
 );
 
-INJECT JxElement : implements PrimaryExpression
+
 // 1.2 JX Elements
 JxElement:(
 	JxOpeningElement [SCAN JxChildren => JxChildren] JxClosingElement
@@ -120,3 +120,6 @@ JxChildExpression :(
   |
   <DOT><DOT><DOT> AssignmentExpression
 );
+
+INJECT JxElement : extends JxExpression
+INJECT JxFragment : extends JxExpression
