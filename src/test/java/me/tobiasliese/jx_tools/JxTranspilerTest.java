@@ -1,32 +1,31 @@
 package me.tobiasliese.jx_tools;
 
 
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.FieldSource;
-import org.junit.jupiter.params.provider.FieldSources;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.platform.engine.support.descriptor.FileSource;
+import org.junit.jupiter.api.Test;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 class JxTranspilerTest {
+	private static final String stringEscapeSeq = "\"".repeat(3);
 
 
-	@ParameterizedTest
-	@ValueSource(strings = {"example.jx"})
-	public void transpile(String path) throws IOException {
-		path = this.getClass().getClassLoader().getResource(path).getPath();
-		JxTranspiler jxTranspiler = new JxTranspiler();
-		System.out.println(jxTranspiler.transpile(new String(Files.readAllBytes(Path.of(path)))));
+	@Test
+	public void testExample() throws IOException {
+		String sourceFileName = "example.jx";
+		String sourcePath = Objects.requireNonNull(this.getClass().getClassLoader().getResource(sourceFileName)).getPath();
+		String sourceContent = new String(Files.readAllBytes(Path.of(sourcePath)));
+
+		String expectedResultName = "Example.java";
+		String expectedResultPath = Objects.requireNonNull(this.getClass().getClassLoader().getResource(expectedResultName)).getPath();
+		String expectedResultContent = new String(Files.readAllBytes(Path.of(expectedResultPath)));
+
+		JxTranspiler jxTranspiler = new JxTranspiler(stringEscapeSeq, stringEscapeSeq);
+		assertEquals(expectedResultContent, jxTranspiler.transpile(sourceContent));
 	}
-
-
 }

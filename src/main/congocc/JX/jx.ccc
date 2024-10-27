@@ -34,8 +34,7 @@ JxFragment : (
   <LT> <GT>
   JxChildren
   <LT> <SLASH> <GT>
-)
-;
+);
 
 JxElementName : (
   <IDENTIFIER>
@@ -102,7 +101,7 @@ JxChildren :
 ;
 
 JxChild :(
-  <LBRACE> [SCAN JxChildExpression => JxChildExpression] <RBRACE>
+  <LBRACE> [ SCAN JxChildExpression => JxChildExpression ] <RBRACE>
   |
   SCAN JxElement => JxElement
   |
@@ -116,7 +115,7 @@ JxText :
 ;
 
 JxChildExpression :(
-  AssignmentExpression
+  SCAN AssignmentExpression => AssignmentExpression
   |
   <DOT><DOT><DOT> AssignmentExpression
 );

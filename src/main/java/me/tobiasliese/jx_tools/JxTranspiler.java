@@ -8,10 +8,14 @@ import java.util.List;
 
 public class JxTranspiler {
 	JavaParser javaParser;
-	private static final String stringEscapeSeq = "\"".repeat(3);
+	private String prefix;
+	private String suffix;
+	private String name;
+	int depth = 0;
 
-	boolean isJxElement(Node node) {
-		return node.getClass().equals(JxElement.class) || node.getClass().equals(JxFragment.class);
+	public JxTranspiler(String prefix, String suffix) {
+		this.prefix = prefix;
+		this.suffix = suffix;
 	}
 
 	StringBuilder transpile(List<Node> nodes, StringBuilder builder) {
@@ -30,18 +34,19 @@ public class JxTranspiler {
 	StringBuilder transpile(JxExpression expression, List<Node> children, StringBuilder builder) {
 		if (expression == null)
 			return builder;
-		if (!isJxElement(expression.getParent())) {
-			builder.append(stringEscapeSeq);
+		if (depth++ == 0) {
+			builder.append(prefix);
 		}
 		transpile(children, builder);
-		if (children.getFirst() != null && !isJxElement(children.getFirst())) {
-			builder.append(stringEscapeSeq);
+		if (--depth == 0) {
+			builder.append(suffix);
 		}
 		return builder;
 	}
 
 	StringBuilder transpile(JxExpression expression, StringBuilder builder) {
-		return transpile(expression, expression.children(), builder);
+		transpile(expression, expression.children(), builder);
+		return builder.append(System.lineSeparator());
 	}
 
 	StringBuilder transpile(JxFragment jxFragment, StringBuilder builder) {
@@ -64,14 +69,19 @@ public class JxTranspiler {
 				transpile(jxFragment, builder);
 			case JxElement jxElement ->
 				transpile(jxElement, builder);
+			case Identifier identifier when node.getParent().getClass().equals(ClassDeclaration.class) -> {
+				name = identifier.toString();
+				builder.append(name);
+				transpile(node.children(), builder);
+			}
 			case Node.TerminalNode terminalNode -> {
+				builder.append(" ");
 				builder.append(terminalNode.toString());
-				// attach whitespaces after the last char
-				int i = terminalNode.getEndOffset();
-				while (terminalNode.getTokenSource().length() > i &&
-						Character.isWhitespace(terminalNode.getTokenSource().charAt(i))) {
-					builder.append(terminalNode.getTokenSource().charAt(i++));
-				}
+			}
+			case JxChild jxChild -> {
+				builder.append("<slot>");
+				transpile(jxChild.children(), builder);
+				builder.append("</slot>");
 			}
 			default -> transpile(node.children(), builder);
 		}
@@ -90,5 +100,9 @@ public class JxTranspiler {
 		StringBuilder builder = new StringBuilder();
 
 		return transpile(root, builder).toString();
+	}
+
+	public String getName() {
+		return name;
 	}
 }
