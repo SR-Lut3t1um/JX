@@ -1,14 +1,17 @@
-package me.tobiasliese.Example;
+package example.example;
 
+import me.tobiasliese.jx_compiler.jvm.Test;
 
-public class Example {
-	String render(String asd) {
-		return <h1>
-				<h2>
-					{asd}
-				</h2>
-			<Example2>
-			</Example2>
-		</h1>;
-	}
+Example (String example, float test, Test test1) {
+    <h1 id="a">
+        <h2>
+            {example}
+        </h2>
+        {test}
+        <h1>
+            {test1.test().test().test()}
+        </h1>
+        <Example2>
+        </Example2>
+    </h1>
 }

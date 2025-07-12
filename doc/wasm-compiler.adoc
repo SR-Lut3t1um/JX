@@ -1,0 +1,13 @@
+= Wasm compiler
+
+jx files are compiled to wasm using a dedicated compiler
+
+[plantuml, format="svg", id="wasm-class-diagramm"]
+----
+@startuml
+Class01 <|-- Class02
+Class03 *-- Class04
+Class05 o-- Class06
+Class09 -- Class10
+@enduml
+----

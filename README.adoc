@@ -1,0 +1,53 @@
+= Java meets jsx
+
+This project is combining many web development technologies under one umbrella intending to provide a techstack that 
+enables a simple developer experience whilst running on a modern and well performing fundation.
+
+As such it's inspired heavily by .jsx to create a simple way to generate html files.
+
+== techstack:
+wasm gc for running java inside the browser
+also wasm component model to allow wasm dom manipulation
+websockets to connect the browser to the server using a bidirectional connection
+
+On application load a websocket connection is opened.
+Each message will contain the id first (in wasm name type format)
+than a array of name types with their field name follows, fo
+
+== A simple overview:
+Compiletime:
+.jx files -> java bytecode quarkus will run
+          -> wasm code the browser will run
+          -> wasm component model
+Runtime:
+layout wasm runtime:
+holds a vector of objects each containing a reference to their dom representation they provide getter and setter for
+new values
+
+[plantuml, format="svg", id="myId"]
+----
+@startuml
+alice -> bob
+@enduml
+----
+== Implementation notes:
+java bytecode will be a value class in the future, where the created fields will be private tho value based
+
+wasm implementation is currently paused to see if graalvm makes progress. record is created for each webcomponent type
+
+
+== Dataflow
+-Http request -> 
+
+== How it works:
+A JavaC plugin is provided to compile the JX files.
+
+
+```sequence
+Source of truth can be added in the router
+
+A source of truth in essence is just a set of tables. 
+the router will be graph based.
+
+where the router will be able to infer data from the context of the source of truth
+``
