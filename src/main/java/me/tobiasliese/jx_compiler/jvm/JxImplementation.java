@@ -94,26 +94,61 @@ class JxImplementation {
             codeBuilder
                     .aload(paramIndex);
         }
-        try {
-            var methodOrField = ctx.primary().primaryNoNewArray().identifier().Identifier().toString();
-            if ( // I know this is hideous
-                    ctx.primary().primaryNoNewArray().children.get(3).getText().equals("(") &&
-                            ctx.primary().primaryNoNewArray().children.get(4).getText().equals(")")) {
-                var cm = TypeGraph.getCodeModel(desc);
-                var methodDesc = cm.getMethods().get(methodOrField);
-                codeBuilder
-                        .invokevirtual(desc, methodOrField, methodDesc);
-                desc = methodDesc.returnType();
-            } else {
-                var cm = TypeGraph.getCodeModel(desc);
-                var fieldDesc = cm.getFields().get(methodOrField);
-                codeBuilder.getfield(desc, methodOrField, fieldDesc);
-                desc = fieldDesc;
-            }
-        } catch (NullPointerException ignore) {
+        desc = walkCall(ctx, desc);
 
-        }
         convertToString(desc);
+    }
+
+    private ClassDesc walkCall(JxParser.PostfixExpressionContext ctx, ClassDesc desc) {
+        String methodOrField;
+        try {
+             methodOrField = ctx.primary().primaryNoNewArray().identifier().Identifier().toString();
+        } catch (NullPointerException ignore) {
+            return desc;
+        }
+
+        if ( // I know this is hideous
+                ctx.primary().primaryNoNewArray().children.get(3).getText().equals("(") &&
+                        ctx.primary().primaryNoNewArray().children.get(4).getText().equals(")")) {
+            var cm = TypeGraph.getCodeModel(desc);
+            var methodDesc = cm.getMethods().get(methodOrField);
+            codeBuilder
+                    .invokevirtual(desc, methodOrField, methodDesc);
+            desc = methodDesc.returnType();
+        } else {
+            var cm = TypeGraph.getCodeModel(desc);
+            var fieldDesc = cm.getFields().get(methodOrField);
+            codeBuilder.getfield(desc, methodOrField, fieldDesc);
+            desc = fieldDesc;
+        }
+        return walkCall(ctx.primary().primaryNoNewArray().pNNA(), desc);
+    }
+
+    private ClassDesc walkCall(JxParser.PNNAContext ctx, ClassDesc desc) {
+        if (ctx == null) {
+            return desc;
+        }
+
+        var methodOrField = ctx.identifier().Identifier().toString();
+        boolean isMethod = ctx.children.get(2).getText().equals("(");
+        if (isMethod) {
+            var cm = TypeGraph.getCodeModel(desc);
+            var methodDesc = cm.getMethods().get(methodOrField);
+            if (methodDesc == null) {
+                throw new RuntimeException("Method does not exist");
+            }
+            codeBuilder
+                    .invokevirtual(desc, methodOrField, methodDesc);
+            System.out.println(methodDesc.returnType());
+            desc = methodDesc.returnType();
+        } else {
+            var cm = TypeGraph.getCodeModel(desc);
+            var fieldDesc = cm.getFields().get(methodOrField);
+            codeBuilder.getfield(desc, methodOrField, fieldDesc);
+            System.out.println(fieldDesc);
+            desc = fieldDesc;
+        }
+        return walkCall(ctx.pNNA(), desc);
     }
 
     private List<ClassDesc> valueOfDescs() {
