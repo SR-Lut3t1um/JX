@@ -275,7 +275,7 @@ STRING_LITERAL
   ;
 
 
-WS: [ \t\r\n\u000C]+ -> skip;
+WS: [ \t\r\n\u000C]+ -> channel(HIDDEN);
 
 Identifier
     : IdentifierStart IdentifierPart*

@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeModel {
-    private Map<String, MethodTypeDesc> methods = new HashMap<>();
-    private Map<String, ClassDesc> fields = new HashMap<>();
+    private final Map<String, MethodTypeDesc> methods = new HashMap<>();
+    private final Map<String, ClassDesc> fields = new HashMap<>();
 
     public static CodeModel of(ClassDesc classDesc) throws ClassNotFoundException {
 
@@ -51,5 +51,13 @@ public class CodeModel {
         }
 
         return codeModel;
+    }
+
+    public Map<String, ClassDesc> getFields() {
+        return Map.copyOf(fields);
+    }
+
+    public Map<String, MethodTypeDesc> getMethods() {
+        return Map.copyOf(methods);
     }
 }

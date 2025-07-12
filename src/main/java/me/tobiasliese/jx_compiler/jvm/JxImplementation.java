@@ -82,7 +82,6 @@ class JxImplementation {
         var paramIndex = typeGraph.getNodeIndex(identifier) + 1;
 
         if (desc.isPrimitive()) {
-            System.out.println(desc.descriptorString());
             switch (desc.descriptorString()) {
                 case "F" ->
                         codeBuilder
@@ -94,6 +93,25 @@ class JxImplementation {
         } else {
             codeBuilder
                     .aload(paramIndex);
+        }
+        try {
+            var methodOrField = ctx.primary().primaryNoNewArray().identifier().Identifier().toString();
+            if ( // I know this is hideous
+                    ctx.primary().primaryNoNewArray().children.get(3).getText().equals("(") &&
+                            ctx.primary().primaryNoNewArray().children.get(4).getText().equals(")")) {
+                var cm = TypeGraph.getCodeModel(desc);
+                var methodDesc = cm.getMethods().get(methodOrField);
+                codeBuilder
+                        .invokevirtual(desc, methodOrField, methodDesc);
+                desc = methodDesc.returnType();
+            } else {
+                var cm = TypeGraph.getCodeModel(desc);
+                var fieldDesc = cm.getFields().get(methodOrField);
+                codeBuilder.getfield(desc, methodOrField, fieldDesc);
+                desc = fieldDesc;
+            }
+        } catch (NullPointerException ignore) {
+
         }
         convertToString(desc);
     }

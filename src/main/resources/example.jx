@@ -9,7 +9,7 @@ Example (String example, float test, Test test1) {
         </h2>
         {test}
         <h1>
-            {test1.test().test().test()}
+            {test1.test()}
         </h1>
         <Example2>
         </Example2>
