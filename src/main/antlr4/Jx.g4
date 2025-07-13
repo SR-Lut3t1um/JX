@@ -11,7 +11,7 @@ component
 
 
 moduleDefinition
-    : moduleName '(' formalParameterList ')' '{' jxExpression '}';
+    : moduleName '(' formalParameterList? ')' '{' jxExpression '}';
 
 moduleName
     : Identifier

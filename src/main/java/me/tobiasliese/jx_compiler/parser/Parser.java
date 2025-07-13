@@ -56,7 +56,7 @@ public class Parser {
     ) throws ClassNotFoundException {
         TypeGraph graph = new TypeGraph();
 
-        if (params.children == null || params.formalParameter().getFirst().children == null) {
+        if (params == null || params.children == null) {
             return graph;
         }
 
