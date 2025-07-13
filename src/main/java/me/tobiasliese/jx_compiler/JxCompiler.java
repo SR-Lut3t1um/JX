@@ -1,8 +1,10 @@
 package me.tobiasliese.jx_compiler;
 
 
+import me.tobiasliese.jx_compiler.parser.ParsedFile;
+
 import java.io.IOException;
 
 public interface JxCompiler {
-    byte[] compile(String path) throws IOException, ClassNotFoundException;
+    byte[] compile(ParsedFile file) throws IOException, ClassNotFoundException;
 }

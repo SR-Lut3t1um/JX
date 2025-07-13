@@ -1,4 +1,4 @@
-package me.tobiasliese.jx_compiler.jvm.code;
+package me.tobiasliese.jx_compiler.code_insight;
 
 import java.lang.constant.ClassDesc;
 import java.util.*;

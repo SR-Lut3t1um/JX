@@ -1,8 +1,7 @@
-package me.tobiasliese.jx_compiler.jvm.code;
+package me.tobiasliese.jx_compiler.code_insight;
 
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -1,9 +1,10 @@
 package example.example;
 
 import me.tobiasliese.jx_compiler.jvm.Test;
+import example.example.Example2;
 
 Example (String example, float test, Test test1) {
-    <h1 id="a">
+    <h1 id="hello">
         <h2>
             {example}
         </h2>
@@ -11,7 +12,10 @@ Example (String example, float test, Test test1) {
         <h1>
             {test1.test()}
         </h1>
+
+        <h1/>
         <Example2>
         </Example2>
+        <Example3/>
     </h1>
 }

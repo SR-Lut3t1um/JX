@@ -1,0 +1,9 @@
+package example.example;
+
+import me.tobiasliese.jx_compiler.jvm.Test;
+
+Example2 () {
+    <h1>
+        Hello World
+    </h1>
+}

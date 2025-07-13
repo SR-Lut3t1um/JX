@@ -246,6 +246,7 @@ abbr
 
 h1
     : '<' 'h1' (htmlGlobalAttributes)? '>' jxChildren? '<' '/' 'h1' '>'
+    | '<' 'h1' (htmlGlobalAttributes)? '/' '>'
     ;
 
 h2
@@ -282,8 +283,8 @@ Identifier
     ;
 
 JxStringCharacter
-    : [a-z]
-    | [A-Z]
+    : [A-Z]
+    | [a-z]
     | [0-9]
     ;
 

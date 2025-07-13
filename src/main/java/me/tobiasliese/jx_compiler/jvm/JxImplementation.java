@@ -2,7 +2,7 @@ package me.tobiasliese.jx_compiler.jvm;
 
 
 import me.tobiasliese.jxParser.JxParser;
-import me.tobiasliese.jx_compiler.jvm.code.TypeGraph;
+import me.tobiasliese.jx_compiler.code_insight.TypeGraph;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -46,9 +46,24 @@ class JxImplementation {
             }
             case JxParser.JxOpeningElementContext ctx -> {
                 // append input of element name
+                System.out.println(ctx.jxElementName().jxIdentifier().Identifier());
                 codeBuilder
                         .ldc(ctx.getText())
                         .invokevirtual(STRING_BUILDER, "append", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Ljava/lang/StringBuilder;"));
+            }
+            case JxParser.HtmlGlobalAttributesContext ctx -> {
+                codeBuilder
+                        .ldc(" ")
+                        .invokevirtual(STRING_BUILDER, "append", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Ljava/lang/StringBuilder;"));
+                for (int i = 0; i < tree.getChildCount(); i++) {
+                    walkTree(tree.getChild(i));
+                }
+            }
+            case JxParser.JxSelfClosingElementContext ctx -> {
+                // todo load
+                // todo run render method
+                // todo profit
+                System.out.println(ctx.jxElementName().jxIdentifier().Identifier());
             }
             case JxParser.JxClosingElementContext ctx -> {
                 // do nothing
@@ -67,7 +82,8 @@ class JxImplementation {
         }
     }
 
-    private void appendString(String string) {
+    private void loadComponent(String name, String importPath) {
+        ClassDesc.of(importPath, name);
     }
 
     private void loadVar(JxParser.PostfixExpressionContext ctx) {
@@ -131,8 +147,8 @@ class JxImplementation {
 
         var methodOrField = ctx.identifier().Identifier().toString();
         boolean isMethod = ctx.children.get(2).getText().equals("(");
+        var cm = TypeGraph.getCodeModel(desc);
         if (isMethod) {
-            var cm = TypeGraph.getCodeModel(desc);
             var methodDesc = cm.getMethods().get(methodOrField);
             if (methodDesc == null) {
                 throw new RuntimeException("Method does not exist");
@@ -142,7 +158,6 @@ class JxImplementation {
             System.out.println(methodDesc.returnType());
             desc = methodDesc.returnType();
         } else {
-            var cm = TypeGraph.getCodeModel(desc);
             var fieldDesc = cm.getFields().get(methodOrField);
             codeBuilder.getfield(desc, methodOrField, fieldDesc);
             System.out.println(fieldDesc);

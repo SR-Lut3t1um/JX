@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import me.tobiasliese.jxParser.JxParser;
 import me.tobiasliese.jxParser.JxLexer;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -17,7 +15,7 @@ public class JxParserTest {
 
     @Test
     void test() throws IOException {
-        String sourceFile = "example.jx";
+        String sourceFile = "testcases/1/example.jx";
         String sourcePath = Objects.requireNonNull(this.getClass().getClassLoader().getResource(sourceFile)).getPath();
 
         CharStream charStream = CharStreams.fromFileName(sourcePath);
