@@ -9,7 +9,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.constant.ClassDesc;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,23 @@ public class Parser {
         var parameters = component.moduleDefinition().formalParameterList();
         var parameterGraph = parameterGraph(imports, parameters);
 
-        return new ParsedFile(lexer, parser, name, pck, parameterGraph, component, imports);
+        return new ParsedFile(lexer, parser, name, pck, parameterGraph, component, parseImports(imports));
+    }
+
+    private List<String> parseImports(List<JxParser.ImportDeclarationContext> ctx) {
+        return ctx.stream().map(this::parseImport).toList();
+    }
+
+    private String parseImport(JxParser.ImportDeclarationContext ctx) {
+        return parseImport(ctx.singleTypeImportDeclaration().typeName().packageName());
+    }
+
+    private String parseImport(JxParser.PackageNameContext ctx) {
+        if (ctx.packageName() == null) {
+            return ctx.identifier().Identifier().toString();
+        } else {
+            return ctx.identifier().Identifier() + "." + parseImport(ctx.packageName());
+        }
     }
 
     private TypeGraph parameterGraph(

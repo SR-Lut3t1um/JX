@@ -12,6 +12,6 @@ public record ParsedFile(
         String pck,
         TypeGraph parameterGraph,
         JxParser.ComponentContext componentContext,
-        List<JxParser.ImportDeclarationContext> imports
+        List<String> imports
 ) {
 }

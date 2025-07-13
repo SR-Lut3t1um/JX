@@ -5,6 +5,9 @@ import example.example.Example2;
 
 Example (String example, float test, Test test1) {
     <h1 id="hello">
+        <h1>
+            Hello world
+        </h1>
         <h2>
             {example}
         </h2>

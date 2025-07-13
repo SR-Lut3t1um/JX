@@ -111,7 +111,7 @@ jxChild
     ;
 
 jxText
-    : jxTextCharacter jxText?
+    : Identifier (Identifier)*
     ;
 
 jxTextCharacter

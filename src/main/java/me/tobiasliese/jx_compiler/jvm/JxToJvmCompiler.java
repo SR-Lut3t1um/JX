@@ -17,7 +17,6 @@ import java.lang.constant.MethodTypeDesc;
  *
  */
 public class JxToJvmCompiler implements JxCompiler {
-	private String name;
 
 	/**
 	 * Compiles a JX component into a Java value class files
@@ -27,7 +26,7 @@ public class JxToJvmCompiler implements JxCompiler {
 	@Override
 	public byte[] compile(ParsedFile file) throws IOException, ClassNotFoundException {
 
-        ClassDesc desc = ClassDesc.of(file.pck(), name);
+        ClassDesc desc = ClassDesc.of(file.pck(), file.name());
         ClassDesc stringDesc = ClassDesc.of("java.lang", "String");
 
         ClassDesc stringBuilder = ClassDesc.of("java.lang", "StringBuilder");
