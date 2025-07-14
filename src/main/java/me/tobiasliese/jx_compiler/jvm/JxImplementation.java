@@ -90,7 +90,6 @@ class JxImplementation {
                 }
 
                 for (var param: method.get().getParameters()) {
-                    System.out.println(param.getName());
                 }
                 // todo profit
             }

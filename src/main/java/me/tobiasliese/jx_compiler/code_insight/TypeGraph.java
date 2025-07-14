@@ -17,7 +17,6 @@ public class TypeGraph {
     }
 
     public void addNode(String key, ClassDesc desc) {
-        System.out.println(key);
         nodeList.add(key);
         nodes.put(key, desc);
         if (desc == null) {

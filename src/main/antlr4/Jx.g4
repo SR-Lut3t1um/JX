@@ -26,14 +26,14 @@ jxExpression
 jxElement
     : htmlElement
     | jxSelfClosingElement
-    | jxOpeningElement (jxChildren)? jxClosingElement
+    | jxOpeningElement jxChildren? jxClosingElement
     ;
 
 jxSelfClosingElement
-    : '<' jxElementName (jxAttributes)? '/' '>';
+    : '<' jxElementName jxAttributes? '/' '>';
 
 jxOpeningElement
-    : '<' jxElementName (jxAttributes)? '>';
+    : '<' jxElementName jxAttributes? '>';
 
 jxClosingElement
     : '<' '/' jxElementName '>';
@@ -58,7 +58,8 @@ jxMemberExpression
     : jxIdentifier '.' jxIdentifier;
 
 jxAttributes
-    : jxSpreadAttribute jxAttribute?;
+    : (jxSpreadAttribute | jxAttribute)*
+    ;
 
 jxSpreadAttribute
     : '{' '.' '.' '.' assignmentExpression '}';
@@ -84,7 +85,7 @@ jxAttributeValue
     ;
 
 jxDoubleStringCharacters
-    : jxDoubleStringCharacter jxDoubleStringCharacters?
+    : jxDoubleStringCharacter+
     ;
 
 jxDoubleStringCharacter
@@ -100,7 +101,7 @@ jxSingleStringCharacter
     ;
 
 jxChildren
-    : jxChild jxChildren?
+    : jxChild+
     ;
 
 jxChild
@@ -111,7 +112,7 @@ jxChild
     ;
 
 jxText
-    : Identifier (Identifier)*
+    : Identifier+
     ;
 
 jxTextCharacter

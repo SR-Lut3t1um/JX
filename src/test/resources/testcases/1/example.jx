@@ -8,7 +8,6 @@ import example.example.Example3;
 Example (String example, float test, Test test1) {
     <h1 id="hello">
         <h1>
-            Hello world
         </h1>
         <h2>
             {example}
@@ -21,6 +20,6 @@ Example (String example, float test, Test test1) {
         <h1/>
         <Example2>
         </Example2>
-        <Example3/>
+        <Example3 hellUwU={"Hello world"}/>
     </h1>
 }

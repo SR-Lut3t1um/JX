@@ -38,7 +38,6 @@ public class JxToJvmCompiler implements JxCompiler {
 
         MethodTypeDesc renderMethodReturnType = MethodTypeDesc.of(stringDesc, file.typeGraph().getNodes());
         List<String> parameterNames = file.typeGraph().getNodeNames();
-        System.out.println(parameterNames);
         List<MethodParameterInfo> attrs = new ArrayList<>();
         for (var name: parameterNames) {
             attrs.add(MethodParameterInfo.of(Optional.of(name)));
