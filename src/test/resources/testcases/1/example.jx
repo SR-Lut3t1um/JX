@@ -2,6 +2,7 @@ package example.example;
 
 import me.tobiasliese.jx_compiler.jvm.Test;
 import example.example.Example2;
+import example.example.Example3;
 
 Example (String example, float test, Test test1) {
     <h1 id="hello">

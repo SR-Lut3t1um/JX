@@ -1,8 +1,6 @@
 package example.example;
 
-import example.example.Example3;
-
-Example2 () {
+Example3 () {
     <h1>
         Hello World
     </h1>

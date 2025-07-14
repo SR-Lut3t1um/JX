@@ -87,7 +87,6 @@ public class Parser {
                     graph.addNode(name, desc);
 
                     Class.forName(getFullyQualifiedClassName(type.getText(), imports));
-                    System.out.println("detected type " + type.getText());
                 } else {
                     var type = t.unannClassOrInterfaceType();
                     graph.addNode(name, ClassDesc.of(getFullyQualifiedClassName(type.getText(), imports)));
