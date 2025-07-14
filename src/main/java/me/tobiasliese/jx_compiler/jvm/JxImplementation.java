@@ -9,9 +9,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import javax.swing.text.html.Option;
 import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.attribute.MethodParametersAttribute;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,6 +82,16 @@ class JxImplementation {
 
                 Class<?> clazz = classLoader.loadClass(classPath.get());
                 // todo run render method
+                var method = Arrays.stream(clazz.getDeclaredMethods())
+                        .filter(elem -> elem.getName().equals("render"))
+                        .findFirst();
+                if (method.isEmpty()) {
+                    throw new IllegalStateException("Component has no render method");
+                }
+
+                for (var param: method.get().getParameters()) {
+                    System.out.println(param.getName());
+                }
                 // todo profit
             }
             case JxParser.JxClosingElementContext ctx -> {
@@ -172,12 +184,10 @@ class JxImplementation {
             }
             codeBuilder
                     .invokevirtual(desc, methodOrField, methodDesc);
-            System.out.println(methodDesc.returnType());
             desc = methodDesc.returnType();
         } else {
             var fieldDesc = cm.getFields().get(methodOrField);
             codeBuilder.getfield(desc, methodOrField, fieldDesc);
-            System.out.println(fieldDesc);
             desc = fieldDesc;
         }
         return walkCall(ctx.pNNA(), desc);

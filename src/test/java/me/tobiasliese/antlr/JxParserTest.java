@@ -23,7 +23,5 @@ public class JxParserTest {
         CommonTokenStream stream = new CommonTokenStream(lexer);
         var parser = new JxParser(stream);
         var component = parser.component();
-        System.out.println(component.packageDeclaration().identifier().getFirst().Identifier().toString());
-        System.out.println(component.importDeclaration());
     }
 }

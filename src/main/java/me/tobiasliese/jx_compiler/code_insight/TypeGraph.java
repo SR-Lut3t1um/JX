@@ -17,6 +17,7 @@ public class TypeGraph {
     }
 
     public void addNode(String key, ClassDesc desc) {
+        System.out.println(key);
         nodeList.add(key);
         nodes.put(key, desc);
         if (desc == null) {
@@ -37,6 +38,10 @@ public class TypeGraph {
 
     public List<ClassDesc> getNodes() {
         return nodeList.stream().map(nodes::get).toList();
+    }
+
+    public List<String> getNodeNames() {
+        return List.copyOf(nodeList);
     }
 
     public Set<Map.Entry<String, ClassDesc>> getNodesEntrySet() {

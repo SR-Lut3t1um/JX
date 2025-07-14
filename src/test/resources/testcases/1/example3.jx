@@ -1,6 +1,6 @@
 package example.example;
 
-Example3 () {
+Example3 (String hellUwU) {
     <h1>
         Hello World
     </h1>

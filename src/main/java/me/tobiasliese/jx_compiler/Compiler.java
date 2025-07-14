@@ -35,7 +35,6 @@ public class Compiler {
                 Files.createDirectories(output);
                 output = output.resolve(parsed.get(work).name() + ".class");
                 byte[] clazz = compiler.compile(parsed.get(work), cmp);
-                System.out.println("loading: " + parsed.get(work).pck() + "." + parsed.get(work).name());
                 cmp.define(
                         parsed.get(work).pck() + "." + parsed.get(work).name(),
                         clazz

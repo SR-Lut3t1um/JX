@@ -10,7 +10,7 @@ public record ParsedFile(
         me.tobiasliese.jxParser.JxParser parser,
         String name,
         String pck,
-        TypeGraph parameterGraph,
+        TypeGraph typeGraph,
         JxParser.ComponentContext componentContext,
         List<String> imports
 ) {
