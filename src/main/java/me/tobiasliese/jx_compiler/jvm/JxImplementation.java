@@ -3,36 +3,49 @@ package me.tobiasliese.jx_compiler.jvm;
 
 import me.tobiasliese.jxParser.JxParser;
 import me.tobiasliese.jx_compiler.code_insight.TypeGraph;
+import me.tobiasliese.jx_compiler.parser.ParsedFile;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import javax.swing.text.html.Option;
 import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 class JxImplementation {
     JxParser.JxExpressionContext jxExpressionContext;
     CodeBuilder codeBuilder;
     TypeGraph typeGraph;
+    ClassLoader classLoader;
+    ParsedFile parsedFile;
 
 
     ClassDesc STRING_BUILDER = ClassDesc.of("java.lang", "StringBuilder");
     ClassDesc STRING = ClassDesc.of("java.lang.String");
 
-    public JxImplementation(JxParser.JxExpressionContext jxExpressionContext, CodeBuilder codeBuilder, TypeGraph typeGraph) {
+    public JxImplementation(
+            JxParser.JxExpressionContext jxExpressionContext,
+            CodeBuilder codeBuilder,
+            TypeGraph typeGraph,
+            ClassLoader cl,
+            ParsedFile parsedFile
+    ) {
         this.jxExpressionContext = jxExpressionContext;
         this.codeBuilder = codeBuilder;
         this.typeGraph = typeGraph;
+        this.classLoader = cl;
+        this.parsedFile = parsedFile;
     }
 
-    public void appender() {
+    public void appender() throws ClassNotFoundException {
         var type = jxExpressionContext.children.getFirst();
         walkTree(type);
     }
 
-    void walkTree(ParseTree tree) {
+    void walkTree(ParseTree tree) throws ClassNotFoundException {
         switch (tree) {
             case JxParser.PostfixExpressionContext ctx -> {
                 loadVar(ctx);
@@ -46,7 +59,6 @@ class JxImplementation {
             }
             case JxParser.JxOpeningElementContext ctx -> {
                 // append input of element name
-                System.out.println(ctx.jxElementName().jxIdentifier().Identifier());
                 codeBuilder
                         .ldc(ctx.getText())
                         .invokevirtual(STRING_BUILDER, "append", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Ljava/lang/StringBuilder;"));
@@ -60,10 +72,15 @@ class JxImplementation {
                 }
             }
             case JxParser.JxSelfClosingElementContext ctx -> {
-                // todo load
+                String className = ctx.jxElementName().jxIdentifier().Identifier().toString();
+                Optional<String> classPath = parsedFile.imports().stream().filter(s -> s.endsWith(className)).findFirst();
+                if (classPath.isEmpty()) {
+                    throw new IllegalStateException("Missing import for component: " + className);
+                }
+
+                Class<?> clazz = classLoader.loadClass(classPath.get());
                 // todo run render method
                 // todo profit
-                System.out.println(ctx.jxElementName().jxIdentifier().Identifier());
             }
             case JxParser.JxClosingElementContext ctx -> {
                 // do nothing

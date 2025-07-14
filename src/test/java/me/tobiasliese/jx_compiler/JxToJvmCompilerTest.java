@@ -16,14 +16,10 @@ public class JxToJvmCompilerTest {
     void simpleTest() throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Compiler compiler = new Compiler();
         String sourcePath = Objects.requireNonNull(this.getClass().getClassLoader().getResource("testcases/1")).getPath();
-        compiler.compilePath(new File(sourcePath));
+        String targetPath = "target/test-output/test1";
+        compiler.compilePath(new File(sourcePath), new File(targetPath));
 
-//        ClassModel cm = ClassFile.of().parse(clazz);
-//        Class<?> cls = new ClassLoader() {
-//            public Class<?> define() {
-//                return defineClass("example.example.Example", clazz, 0, clazz.length);
-//            }
-//        }.define();
+
 //
 //        Object instance = cls.getDeclaredConstructor().newInstance();
 //        Method method = cls.getDeclaredMethod("render", String.class, float.class, me.tobiasliese.jx_compiler.jvm.Test.class);

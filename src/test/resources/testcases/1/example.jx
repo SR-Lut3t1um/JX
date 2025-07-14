@@ -1,6 +1,7 @@
 package example.example;
 
 import me.tobiasliese.jx_compiler.jvm.Test;
+
 import example.example.Example2;
 import example.example.Example3;
 

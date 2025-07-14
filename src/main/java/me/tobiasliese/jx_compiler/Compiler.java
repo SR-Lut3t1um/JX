@@ -5,25 +5,49 @@ import me.tobiasliese.jx_compiler.parser.ParsedFile;
 import me.tobiasliese.jx_compiler.parser.Parser;
 import me.tobiasliese.jx_compiler.util.TopologicalSorting;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class Compiler {
-    public void compilePath(File file) throws IOException, ClassNotFoundException {
+    public void compilePath(File source, File target) throws IOException, ClassNotFoundException {
         var compiler = new JxToJvmCompiler();
         Parser parser = new Parser();
-        var parsed = parser.parseDirectory(file);
+        var parsed = parser.parseDirectory(source);
         var dependencies = figureOutDependencies(parsed);
+        CompilerClassLoader cmp = new CompilerClassLoader();
 
         var compileOrder = figureOutCompileOrder(dependencies);
-        System.out.println(compileOrder);
         for (var workSet: compileOrder) {
             for (var work: workSet) {
-                compiler.compile(parsed.get(work));
+                Path output = target
+                        .toPath()
+                        .toAbsolutePath()
+                        .resolve(
+                                source
+                                        .toPath()
+                                        .relativize(work.toPath())
+                        )
+                        .getParent();
+                Files.createDirectories(output);
+                output = output.resolve(parsed.get(work).name() + ".class");
+                byte[] clazz = compiler.compile(parsed.get(work), cmp);
+                System.out.println("loading: " + parsed.get(work).pck() + "." + parsed.get(work).name());
+                cmp.define(
+                        parsed.get(work).pck() + "." + parsed.get(work).name(),
+                        clazz
+                );
+                writeFile(output.toFile(), clazz);
             }
+        }
+    }
+
+    private void writeFile(File file, byte[] content) throws IOException {
+        try (var writer = new FileOutputStream(file)) {
+            writer.write(content);
         }
     }
 
@@ -37,7 +61,7 @@ public class Compiler {
     private List<List<File>> figureOutCompileOrder(Map<File, List<File>> dependencies) throws IllegalStateException {
         // todo implement parallel algorithm
         List<List<File>> worksets = new ArrayList<>();
-        worksets.add(TopologicalSorting.kahnsAlgorithm(dependencies));
+        worksets.add(TopologicalSorting.kahnsAlgorithm(dependencies).reversed());
         return worksets;
     }
 

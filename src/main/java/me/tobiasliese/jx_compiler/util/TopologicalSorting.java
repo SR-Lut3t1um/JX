@@ -27,7 +27,7 @@ public class TopologicalSorting {
             if (! list.isEmpty())
                 throw new IllegalStateException("Graph has at least one cycle");
         }
-        return l.reversed();
+        return l;
     }
 
     private static <T> List<T> setupNoInc(Map<T, List<T>> graph) {

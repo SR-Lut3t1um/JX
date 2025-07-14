@@ -24,7 +24,7 @@ public class JxToJvmCompiler implements JxCompiler {
 	 * @return
 	 */
 	@Override
-	public byte[] compile(ParsedFile file) throws IOException, ClassNotFoundException {
+	public byte[] compile(ParsedFile file, ClassLoader csl) throws IOException, ClassNotFoundException {
 
         ClassDesc desc = ClassDesc.of(file.pck(), file.name());
         ClassDesc stringDesc = ClassDesc.of("java.lang", "String");
@@ -50,8 +50,12 @@ public class JxToJvmCompiler implements JxCompiler {
                                             .dup()
                                             .invokespecial(stringBuilder, "<init>", voidReturnType);
 
-                                    JxImplementation impl = new JxImplementation(file.componentContext().moduleDefinition().jxExpression(), codeBuilder, file.parameterGraph());
-                                    impl.appender();
+                                    JxImplementation impl = new JxImplementation(file.componentContext().moduleDefinition().jxExpression(), codeBuilder, file.parameterGraph(), csl, file);
+                                    try {
+                                        impl.appender();
+                                    } catch (ClassNotFoundException e) {
+                                        throw new RuntimeException(e);
+                                    }
 
                                     codeBuilder
                                             .invokevirtual(stringBuilder, "toString", MethodTypeDesc.of(stringDesc))
