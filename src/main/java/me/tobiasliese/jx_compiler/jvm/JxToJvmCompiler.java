@@ -65,12 +65,12 @@ public class JxToJvmCompiler implements JxCompiler {
                                                         .dup()
                                                         .invokespecial(stringBuilder, "<init>", voidReturnType);
 
-                                                JxImplementation impl = new JxImplementation(file.componentContext().moduleDefinition().jxExpression(), codeBuilder, file.typeGraph(), csl, file);
-                                                try {
-                                                    impl.appender();
-                                                } catch (ClassNotFoundException e) {
-                                                    throw new RuntimeException(e);
-                                                }
+//                                                JxImplementation impl = new JxImplementation(file.componentContext().moduleDefinition().jxExpression(), codeBuilder, file.typeGraph(), csl, file);
+//                                                try {
+//                                                    impl.appender();
+//                                                } catch (ClassNotFoundException e) {
+//                                                    throw new RuntimeException(e);
+//                                                }
 
                                                 codeBuilder
                                                         .invokevirtual(stringBuilder, "toString", MethodTypeDesc.of(stringDesc))

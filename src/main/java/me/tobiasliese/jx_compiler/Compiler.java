@@ -2,7 +2,7 @@ package me.tobiasliese.jx_compiler;
 
 import me.tobiasliese.jx_compiler.jvm.JxToJvmCompiler;
 import me.tobiasliese.jx_compiler.parser.ParsedFile;
-import me.tobiasliese.jx_compiler.parser.Parser;
+import me.tobiasliese.jx_compiler.parser.ParserUtil;
 import me.tobiasliese.jx_compiler.util.TopologicalSorting;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 public class Compiler {
     public void compilePath(File source, File target) throws IOException, ClassNotFoundException {
         var compiler = new JxToJvmCompiler();
-        Parser parser = new Parser();
+        ParserUtil parser = new ParserUtil();
         var parsed = parser.parseDirectory(source);
         var dependencies = figureOutDependencies(parsed);
         CompilerClassLoader cmp = new CompilerClassLoader();

@@ -54,6 +54,11 @@
 			<artifactId>antlr4-runtime</artifactId>
 			<version>4.13.2</version>
 		</dependency>
+        <dependency>
+            <groupId>me.tobiasliese</groupId>
+            <artifactId>treesitter</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
